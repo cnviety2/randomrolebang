@@ -15,12 +15,18 @@
   <body>
     <button onClick="doPush()">Pick role</button>
     <p id="textRole"></p>
+    <p id="textChui" style="color: red"></p>
   </body>
 </html>
 
 <script>
   var textRole = document.getElementById("textRole");
   var token = window.localStorage.getItem("token");
+  var textChui = document.getElementById("textChui");
+  var role = window.localStorage.getItem("role");
+  if (role != null || role != undefined) {
+    textRole.innerHTML = role;
+  }
   var doPickRole = () => {
     fetch("https://randomrolebang.herokuapp.com/role/getRole", {
       method: "get",
@@ -30,7 +36,10 @@
       },
     })
       .then((response) => response.json())
-      .then((data) => (textRole.innerText = data.data));
+      .then((data) => {
+        textRole.innerHTML = data.data;
+        window.localStorage.setItem("role", data.data);
+      });
   };
   var getToken = () => {
     fetch("https://randomrolebang.herokuapp.com/role/token", {
@@ -41,25 +50,18 @@
       },
     })
       .then((response) => response.json())
-      .then((data) => window.localStorage.setItem("token", data.data));
-  };
-  var doPickRoleWithToken = (token) => {
-    fetch("https://randomrolebang.herokuapp.com/role/getRole?token=" + token, {
-      method: "get",
-      credentials: "same-origin",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => (textRole.innerText = data.data));
+      .then((data) => {
+        window.localStorage.setItem("token", data.data);
+        token = data.data;
+      });
   };
 
   var doPush = () => {
-    if (token != null) {
-      doPickRoleWithToken(token);
+    if (token != null || token != undefined) {
+      textChui.innerHTML = "Mày lấy rồi mà thg mất nết";
     } else {
       getToken();
+      setTimeout(300);
       doPickRole();
     }
   };
