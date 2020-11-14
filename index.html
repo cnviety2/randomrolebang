@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title></title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="" />
+  </head>
+  <body>
+    <button onClick="doPush()">Pick role</button>
+    <p id="textRole"></p>
+  </body>
+</html>
+
+<script>
+  var textRole = document.getElementById("textRole");
+  var token = window.localStorage.getItem("token");
+  var doPickRole = () => {
+    fetch("https://randomrolebang.herokuapp.com/role/getRole", {
+      method: "get",
+      credentials: "same-origin",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => (textRole.innerText = data.data));
+  };
+  var getToken = () => {
+    fetch("https://randomrolebang.herokuapp.com/role/token", {
+      method: "get",
+      credentials: "same-origin",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => window.localStorage.setItem("token", data.data));
+  };
+  var doPickRoleWithToken = (token) => {
+    fetch("https://randomrolebang.herokuapp.com/role/getRole?token=" + token, {
+      method: "get",
+      credentials: "same-origin",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => (textRole.innerText = data.data));
+  };
+
+  var doPush = () => {
+    if (token != null) {
+      doPickRoleWithToken(token);
+    } else {
+      getToken();
+      doPickRole();
+    }
+  };
+</script>
