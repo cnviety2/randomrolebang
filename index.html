@@ -16,6 +16,8 @@
     <button onClick="doPush()">Pick role</button>
     <p id="textRole"></p>
     <p id="textChui" style="color: red"></p>
+    <input type="text" id="inputKey" />
+    <button onClick="doReset()">Reset</button>
   </body>
 </html>
 
@@ -24,6 +26,34 @@
   var token = window.localStorage.getItem("token");
   var textChui = document.getElementById("textChui");
   var role = window.localStorage.getItem("role");
+  var key = document.getElementById("inputKey").value;
+
+  var doReset = () => {
+    key = document.getElementById("inputKey").value;
+    fetch(
+      "https://randomrolebang.herokuapp.com/role/getAccpectedToReset?key=" +
+        key,
+      {
+        method: "get",
+        credentials: "same-origin",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.data === "Correct key") {
+          window.localStorage.removeItem("role");
+          window.localStorage.removeItem("token");
+          textRole.innerHTML = "";
+          textChui.innerHTML = "";
+          role = null;
+          token = null;
+        }
+      });
+  };
+
   if (role != null || role != undefined) {
     textRole.innerHTML = role;
   }
